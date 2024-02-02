@@ -1,25 +1,14 @@
-# Use the base JupyterHub container image
-FROM gesiscss/binder-r2d-g5b5b759-ajibal-2dcoding-38529b:2657d5e087daee122e333a09554bb2beaabc134f
+# Use a base image with Python
+FROM python:3.8
 
-# Install additional Python packages
-RUN python3 -m pip install --no-cache-dir \
-    notebook==6.4.4 \
-    jupyterlab==3.0.16
+# Set the working directory
+WORKDIR /app
 
-# Set up a non-root user
-ARG NB_USER=jovyan
-ARG NB_UID=1000
-ENV USER ${NB_USER}
-ENV NB_UID ${NB_UID}
-ENV HOME /home/${NB_USER}
+# Install JupyterLab
+RUN pip install jupyterlab
 
-# Copy the contents of your repository to the home directory
-COPY . ${HOME}
+# Expose port 8080
+EXPOSE 8080
 
-# Change ownership of the home directory
-USER root
-RUN chown -R ${NB_UID} ${HOME}
-USER ${NB_USER}
-
-# Specify the default command to run JupyterLab
-CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8888", "--no-browser", "--NotebookApp.default_url=/lab/"]
+# Start JupyterLab on port 8080
+CMD ["jupyter", "lab", "--ip=0.0.0.0", "--port=8080", "--no-browser", "--allow-root"]
